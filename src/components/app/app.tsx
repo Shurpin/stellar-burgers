@@ -9,13 +9,7 @@ import {
   Register,
   ResetPassword
 } from '@pages';
-import {
-  createBrowserRouter,
-  Route,
-  RouterProvider,
-  Routes,
-  useNavigate
-} from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import '../../index.css';
 import styles from './app.module.css';
 
@@ -47,7 +41,7 @@ const App = () => {
         <Route
           path='/ingredients/:id'
           element={
-            <Modal title='ingredients id' onClose={() => navigate(-1)}>
+            <Modal title='Ингредиенты' onClose={() => navigate(-1)}>
               <IngredientDetails />
             </Modal>
           }

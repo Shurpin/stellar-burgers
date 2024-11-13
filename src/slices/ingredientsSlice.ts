@@ -18,7 +18,7 @@ const initialState: IngredientsListState = {
   isLoading: true
 };
 
-export const fetchTracks = createAsyncThunk(
+export const fetchIngredients = createAsyncThunk(
   'ingredients/getIngredients',
   async () => getIngredientsApi()
 );
@@ -26,24 +26,11 @@ export const fetchTracks = createAsyncThunk(
 const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
-  reducers: {
-    toggleLike: (state, action) => {
-      const { id } = action.payload;
-      console.log(id, state);
-
-      // state.tracks = state.tracks.map((item) => {
-      //   if (item.id === id) {
-      //     return { ...item, isLiked: !item.isLiked };
-      //   }
-      //
-      //   return item;
-      // });
-    }
-  },
+  reducers: {},
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(
-      fetchTracks.fulfilled,
+      fetchIngredients.fulfilled,
       (state: IngredientsListState, action: PayloadAction<TIngredient[]>) => {
         const buns: TIngredient[] = [];
         const mains: TIngredient[] = [];
@@ -61,9 +48,9 @@ const ingredientsSlice = createSlice({
         });
         // Add user to the state array
         state.data = action.payload;
-        state.buns = buns; // action.payload;
-        state.mains = mains; // action.payload;
-        state.sauces = sauces; // action.payload;
+        state.buns = buns;
+        state.mains = mains;
+        state.sauces = sauces;
         state.isLoading = false;
       }
     );
@@ -84,6 +71,5 @@ export const {
   selectIngredientsMains,
   selectIngredientsSauces
 } = ingredientsSlice.selectors;
-// export const { toggleLike } = ingredientsSlice.actions;
 
 export default ingredientsSlice.reducer;

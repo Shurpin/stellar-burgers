@@ -7,16 +7,20 @@ import { BurgerConstructor } from '@components';
 import { Preloader } from '@ui';
 import { FC, useEffect } from 'react';
 import {
-  fetchTracks,
+  fetchIngredients,
+  selectIngredients,
   selectIsLoadingIngredients
 } from '../../slices/ingredientsSlice';
 
 export const ConstructorPage: FC = () => {
   const dispatch = useDispatch();
+  const ingredients = useSelector(selectIngredients);
   const isIngredientsLoading = useSelector(selectIsLoadingIngredients);
 
   useEffect(() => {
-    dispatch(fetchTracks());
+    if (!ingredients?.length) {
+      dispatch(fetchIngredients());
+    }
   }, []);
 
   return (
