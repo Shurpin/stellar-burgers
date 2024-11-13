@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import tracksSliceReducer from '../slices/ingredientsSlice';
+import burgerConstructorSliceReducer from '../slices/burgerConstructorSlice';
 
 import {
   TypedUseSelectorHook,
@@ -9,7 +10,8 @@ import {
 
 const store = configureStore({
   reducer: {
-    ingredients: tracksSliceReducer
+    ingredients: tracksSliceReducer,
+    burgerConstructor: burgerConstructorSliceReducer
   },
   devTools: process.env.NODE_ENV !== 'production'
 });
