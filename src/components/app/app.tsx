@@ -14,10 +14,24 @@ import '../../index.css';
 import styles from './app.module.css';
 
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from '../../services/store';
+import { setUserData } from '../../slices/userSlice';
+import { getUserApi } from '@api';
 
 const App = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getUserApi()
+      .then((data) => {
+        dispatch(setUserData(data));
+      })
+      .catch(() => {
+        navigate('/login', { replace: true });
+      });
+  }, []);
 
   return (
     <div className={styles.app}>
@@ -27,9 +41,8 @@ const App = () => {
         <Route path='/feed' element={<Feed />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/forgot-password' element={<ForgotPassword />} />
-        <Route path='/profile' element={<Profile />} />
-        <Route path='/profile/orders' element={<ProfileOrders />} />
         <Route
           path='/feed/:number'
           element={
@@ -46,6 +59,8 @@ const App = () => {
             </Modal>
           }
         />
+        <Route path='/profile' element={<Profile />} />
+        <Route path='/profile/orders' element={<ProfileOrders />} />
         <Route
           path='/profile/orders/:number'
           element={

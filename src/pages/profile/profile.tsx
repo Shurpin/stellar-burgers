@@ -1,12 +1,13 @@
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from '../../services/store';
+import { selectUserData, setUserData } from '../../slices/userSlice';
+import { TUserResponse, updateUserApi } from '@api';
 
 export const Profile: FC = () => {
+  const dispatch = useDispatch();
   /** TODO: взять переменную из стора */
-  const user = {
-    name: '',
-    email: ''
-  };
+  const user = useSelector(selectUserData);
 
   const [formValue, setFormValue] = useState({
     name: user.name,
@@ -29,6 +30,19 @@ export const Profile: FC = () => {
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+
+    updateUserApi(formValue)
+      .then((response: TUserResponse) => {
+        // localStorage.setItem('accessToken', response.accessToken);
+        // localStorage.setItem('refreshToken', response.refreshToken);
+        console.log(' updateUserApi - ', response);
+        dispatch(setUserData(response));
+
+        // navigate('/', { replace: true });
+      })
+      .catch((err) => console.log(err));
+    // (data: TRegisterData) => updateUserApi(data)
+    // dispatch(fetchUpdateUserApi(formValue));
   };
 
   const handleCancel = (e: SyntheticEvent) => {

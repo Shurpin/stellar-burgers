@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TConstructorIngredient } from '@utils-types';
+import { fetchOrderBurgerApi } from './orderSlice';
 
 interface BurgerConstructorState {
   bun: null | TConstructorIngredient;
@@ -49,7 +50,15 @@ const burgerConstructorSlice = createSlice({
       );
     }
   },
-  extraReducers: () => {},
+  extraReducers: (builder) => {
+    builder.addCase(
+      fetchOrderBurgerApi.fulfilled,
+      (state: BurgerConstructorState, action) => {
+        state.bun = null;
+        state.ingredients = [];
+      }
+    );
+  },
   selectors: {
     selectBurgerConstructor: (sliceState) => sliceState
   }

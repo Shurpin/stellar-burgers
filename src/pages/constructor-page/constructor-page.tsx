@@ -11,11 +11,13 @@ import {
   selectIngredients,
   selectIsLoadingIngredients
 } from '../../slices/ingredientsSlice';
+import { selectOrderBurgerIsLoading } from '../../slices/orderSlice';
 
 export const ConstructorPage: FC = () => {
   const dispatch = useDispatch();
   const ingredients = useSelector(selectIngredients);
   const isIngredientsLoading = useSelector(selectIsLoadingIngredients);
+  const orderBurgerIsLoading = useSelector(selectOrderBurgerIsLoading);
 
   useEffect(() => {
     if (!ingredients?.length) {
@@ -25,7 +27,7 @@ export const ConstructorPage: FC = () => {
 
   return (
     <>
-      {isIngredientsLoading ? (
+      {isIngredientsLoading || orderBurgerIsLoading ? (
         <Preloader />
       ) : (
         <main className={styles.containerMain}>

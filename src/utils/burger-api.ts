@@ -10,7 +10,7 @@ type TServerResponse<T> = {
   success: boolean;
 } & T;
 
-type TRefreshResponse = TServerResponse<{
+export type TRefreshResponse = TServerResponse<{
   refreshToken: string;
   accessToken: string;
 }>;
@@ -67,7 +67,7 @@ export type TFeedsResponse = TServerResponse<{
   totalToday: number;
 }>;
 
-type TOrdersResponse = TServerResponse<{
+export type TOrdersResponse = TServerResponse<{
   data: TOrder[];
 }>;
 
@@ -204,7 +204,7 @@ export const resetPasswordApi = (data: { password: string; token: string }) =>
       return Promise.reject(data);
     });
 
-type TUserResponse = TServerResponse<{ user: TUser }>;
+export type TUserResponse = TServerResponse<{ user: TUser }>;
 
 export const getUserApi = () =>
   fetchWithRefresh<TUserResponse>(`${URL}/auth/user`, {
