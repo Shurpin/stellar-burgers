@@ -33,16 +33,9 @@ export const Profile: FC = () => {
 
     updateUserApi(formValue)
       .then((response: TUserResponse) => {
-        // localStorage.setItem('accessToken', response.accessToken);
-        // localStorage.setItem('refreshToken', response.refreshToken);
-        console.log(' updateUserApi - ', response);
         dispatch(setUserData(response));
-
-        // navigate('/', { replace: true });
       })
       .catch((err) => console.log(err));
-    // (data: TRegisterData) => updateUserApi(data)
-    // dispatch(fetchUpdateUserApi(formValue));
   };
 
   const handleCancel = (e: SyntheticEvent) => {

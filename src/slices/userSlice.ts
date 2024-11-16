@@ -1,14 +1,6 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-  getUserApi,
-  loginUserApi,
-  registerUserApi,
-  TLoginData,
-  TRegisterData,
-  updateUserApi
-} from '@api';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getUserApi, registerUserApi, TRegisterData } from '@api';
 import { TUser } from '@utils-types';
-import { fetchOrderBurgerApi } from './orderSlice';
 
 interface UserListState {
   user: TUser;
@@ -29,14 +21,8 @@ const initialState: UserListState = {
   updateUserIsLoading: false
 };
 
-export const fetchLoginUserApi = createAsyncThunk(
-  'user/loginUserApi',
-  async (data: TLoginData) => loginUserApi(data)
-);
-
-export const fetchRegisterUserApi = createAsyncThunk(
-  'user/registerUserApi',
-  async (data: TRegisterData) => registerUserApi(data)
+export const fetchGetUserApi = createAsyncThunk('user/getUserApi', async () =>
+  getUserApi()
 );
 
 const userSlice = createSlice({
@@ -45,16 +31,35 @@ const userSlice = createSlice({
   reducers: {
     setUserData: (state, action) => {
       state.user = action.payload.user;
+      state.userIsLoading = false;
     }
   },
-  extraReducers: (builder) => {},
+  extraReducers: (builder) => {
+    // получение пользователя
+    builder.addCase(fetchGetUserApi.pending, (state: UserListState) => {
+      state.userIsLoading = true;
+    });
+    builder.addCase(
+      fetchGetUserApi.fulfilled,
+      (state: UserListState, action) => {
+        state.user = action.payload.user;
+        state.userIsLoading = false;
+      }
+    );
+    builder.addCase(
+      fetchGetUserApi.rejected,
+      (state: UserListState, action) => {
+        state.userIsLoading = false;
+      }
+    );
+  },
   selectors: {
     selectUserData: (sliceState) => sliceState.user,
     selectUserIsLoading: (sliceState) => sliceState.userIsLoading
   }
 });
 
-export const { selectUserData } = userSlice.selectors;
+export const { selectUserData, selectUserIsLoading } = userSlice.selectors;
 export const { setUserData } = userSlice.actions;
 
 export default userSlice.reducer;

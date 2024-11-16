@@ -39,7 +39,7 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => {
           <Logo className='' />
         </div>
         <div
-          onClick={() => (userName ? navigate('/profile') : navigate('/login'))}
+          onClick={() => navigate('/profile')}
           className={styles.link_position_last}
         >
           <ProfileIcon type={'primary'} />

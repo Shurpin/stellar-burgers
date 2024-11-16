@@ -1,5 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getOrdersApi, orderBurgerApi, TOrdersResponse } from '@api';
+import {
+  getOrderByNumberApi,
+  getOrdersApi,
+  orderBurgerApi,
+  TOrdersResponse
+} from '@api';
 import { TOrder } from '@utils-types';
 
 interface OrderListState {
@@ -7,7 +12,10 @@ interface OrderListState {
   orderIsLoading: boolean;
   userOrders: TOrder[];
   userOrdersIsLoading: boolean;
+  orderBurger: TOrder | null;
   orderBurgerIsLoading: boolean;
+  ordersByNumberApi: TOrder | null;
+  isLoadingOrderByNumberApi: boolean;
 }
 
 const initialState: OrderListState = {
@@ -15,7 +23,10 @@ const initialState: OrderListState = {
   orderIsLoading: false,
   userOrders: [],
   userOrdersIsLoading: false,
-  orderBurgerIsLoading: false
+  orderBurger: null,
+  orderBurgerIsLoading: false,
+  ordersByNumberApi: null,
+  isLoadingOrderByNumberApi: false
 };
 
 export const fetchOrder = createAsyncThunk('order/getOrder', async () =>
@@ -32,10 +43,19 @@ export const fetchOrderBurgerApi = createAsyncThunk(
   async (data: string[]) => orderBurgerApi(data)
 );
 
+export const fetchGetOrderByNumberApi = createAsyncThunk(
+  'order/getOrderByNumberApi',
+  async (orderId: number) => getOrderByNumberApi(orderId)
+);
+
 const orderSlice = createSlice({
   name: 'order',
   initialState,
-  reducers: {},
+  reducers: {
+    clearOrderBurgerData: (state) => {
+      state.orderBurger = null;
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchOrder.pending, (state: OrderListState) => {
       state.orderIsLoading = true;
@@ -70,7 +90,7 @@ const orderSlice = createSlice({
     builder.addCase(
       fetchOrderBurgerApi.fulfilled,
       (state: OrderListState, action) => {
-        console.log('slice fetchOrderBurgerApi action.payload', action.payload);
+        state.orderBurger = action.payload.order;
         state.orderBurgerIsLoading = false;
       }
     );
@@ -80,12 +100,34 @@ const orderSlice = createSlice({
         state.orderBurgerIsLoading = false;
       }
     );
+    // просмотр заказа пользователя
+    builder.addCase(
+      fetchGetOrderByNumberApi.pending,
+      (state: OrderListState) => {
+        state.isLoadingOrderByNumberApi = true;
+      }
+    );
+    builder.addCase(
+      fetchGetOrderByNumberApi.fulfilled,
+      (state: OrderListState, action) => {
+        state.ordersByNumberApi = action.payload.orders[0];
+        state.isLoadingOrderByNumberApi = false;
+      }
+    );
+    builder.addCase(
+      fetchGetOrderByNumberApi.rejected,
+      (state: OrderListState, action) => {
+        state.isLoadingOrderByNumberApi = false;
+      }
+    );
   },
   selectors: {
     selectOrderData: (sliceState) => sliceState.order,
     selectUserOrders: (sliceState) => sliceState.userOrders,
     selectOrderIsLoading: (sliceState) => sliceState.orderIsLoading,
-    selectOrderBurgerIsLoading: (sliceState) => sliceState.orderBurgerIsLoading
+    orderBurger: (sliceState) => sliceState.orderBurger,
+    selectOrderBurgerIsLoading: (sliceState) => sliceState.orderBurgerIsLoading,
+    selectOrdersByNumberApi: (sliceState) => sliceState.ordersByNumberApi
   }
 });
 
@@ -93,7 +135,10 @@ export const {
   selectOrderData,
   selectOrderIsLoading,
   selectUserOrders,
-  selectOrderBurgerIsLoading
+  orderBurger,
+  selectOrderBurgerIsLoading,
+  selectOrdersByNumberApi
 } = orderSlice.selectors;
+export const { clearOrderBurgerData } = orderSlice.actions;
 
 export default orderSlice.reducer;
