@@ -11,13 +11,11 @@ import {
   selectIngredients,
   selectIsLoadingIngredients
 } from '../../slices/ingredientsSlice';
-import { selectOrderBurgerIsLoading } from '../../slices/orderSlice';
 
 export const ConstructorPage: FC = () => {
   const dispatch = useDispatch();
   const ingredients = useSelector(selectIngredients);
   const isIngredientsLoading = useSelector(selectIsLoadingIngredients);
-  const orderBurgerIsLoading = useSelector(selectOrderBurgerIsLoading);
 
   useEffect(() => {
     if (!ingredients?.length) {

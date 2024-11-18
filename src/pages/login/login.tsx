@@ -24,7 +24,7 @@ export const Login: FC = () => {
 
         dispatch(setUserData(response));
 
-        navigate('/', { replace: true });
+        navigate(-1);
       })
       .catch((err) => console.log(err));
   };

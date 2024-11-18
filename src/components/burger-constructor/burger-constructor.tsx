@@ -10,8 +10,10 @@ import {
   selectOrderBurgerIsLoading
 } from '../../slices/orderSlice';
 import { selectUserData } from '../../slices/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 export const BurgerConstructor: FC = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const constructorItems = useSelector(selectBurgerConstructor);
 
@@ -22,8 +24,13 @@ export const BurgerConstructor: FC = () => {
   const user = useSelector(selectUserData);
 
   const onOrderClick = () => {
+    if (!user.email) {
+      navigate('/login');
+
+      return;
+    }
+
     if (
-      !user.email ||
       !constructorItems.bun ||
       orderRequest ||
       !constructorItems.ingredients.length

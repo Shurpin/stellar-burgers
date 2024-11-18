@@ -7,46 +7,37 @@ import {
   Logo,
   ProfileIcon
 } from '@zlden/react-developer-burger-ui-components';
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => {
-  const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <header className={styles.header}>
       <nav className={`${styles.menu} p-4`}>
         <div className={styles.menu_part_left}>
-          <>
-            <BurgerIcon onClick={() => navigate('/')} type={'primary'} />
-            <p
-              onClick={() => navigate('/')}
-              className='text text_type_main-default ml-2 mr-10'
-            >
+          <Link relative='path' to='/' state={{ background: location }}>
+            <BurgerIcon type={'primary'} />
+            <p className='text text_type_main-default ml-2 mr-10'>
               Конструктор
             </p>
-          </>
-          <>
-            <ListIcon onClick={() => navigate('/feed')} type={'primary'} />
-            <p
-              onClick={() => navigate('/feed')}
-              className='text text_type_main-default ml-2'
-            >
-              Лента заказов
-            </p>
-          </>
+          </Link>
+          <Link relative='path' to='/feed' state={{ background: location }}>
+            <ListIcon type={'primary'} />
+            <p className='text text_type_main-default ml-2'>Лента заказов</p>
+          </Link>
         </div>
-        <div onClick={() => navigate('/')} className={styles.logo}>
+        <div>
           <Logo className='' />
         </div>
-        <div
-          onClick={() => navigate('/profile')}
-          className={styles.link_position_last}
-        >
-          <ProfileIcon type={'primary'} />
-          <p className='text text_type_main-default ml-2'>
-            {userName || 'Личный кабинет'}
-          </p>
-        </div>
+        <Link relative='path' to='/profile' state={{ background: location }}>
+          <div className={styles.link_position_last}>
+            <ProfileIcon type={'primary'} />
+            <p className='text text_type_main-default ml-2'>
+              {userName || 'Личный кабинет'}
+            </p>
+          </div>
+        </Link>
       </nav>
     </header>
   );

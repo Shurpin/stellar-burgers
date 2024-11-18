@@ -1,6 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TConstructorIngredient } from '@utils-types';
+import { ActionCreator, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { TConstructorIngredient, TIngredient } from '@utils-types';
 import { fetchOrderBurgerApi } from './orderSlice';
+import { v4 as uuidv4 } from 'uuid';
 
 interface BurgerConstructorState {
   bun: null | TConstructorIngredient;
@@ -15,17 +16,23 @@ const initialState: BurgerConstructorState = {
 const burgerConstructorSlice = createSlice({
   name: 'burgerConstructor',
   initialState,
-  reducers: {
-    addBurgerConstructorIngredient: (state, action) => {
-      if (action.payload.type === 'bun') {
-        state.bun = action.payload;
-      } else {
-        state.ingredients = [...state.ingredients, action.payload];
+  reducers: (creators) => ({
+    addBurgerConstructorIngredient: creators.preparedReducer(
+      (ingredient: TIngredient) => ({
+        payload: { ...ingredient, id: uuidv4() }
+      }),
+
+      (state: BurgerConstructorState, action: PayloadAction<any>) => {
+        if (action.payload.type === 'bun') {
+          state.bun = action.payload;
+        } else {
+          state.ingredients = [...state.ingredients, action.payload];
+        }
       }
-    },
+    ),
     removeBurgerConstructorIngredient: (state, action) => {
       state.ingredients = state.ingredients.filter(
-        (item, index) => index !== action.payload
+        (item) => item.id !== action.payload
       );
     },
     moveToIngredient: (
@@ -49,7 +56,7 @@ const burgerConstructorSlice = createSlice({
         action.payload.toIndex
       );
     }
-  },
+  }),
   extraReducers: (builder) => {
     builder.addCase(
       fetchOrderBurgerApi.fulfilled,
@@ -60,7 +67,8 @@ const burgerConstructorSlice = createSlice({
     );
   },
   selectors: {
-    selectBurgerConstructor: (sliceState) => sliceState
+    selectBurgerConstructor: (sliceState) =>
+      ({ ...sliceState }) as BurgerConstructorState
   }
 });
 
