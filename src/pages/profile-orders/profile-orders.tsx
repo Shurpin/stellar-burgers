@@ -20,9 +20,6 @@ export const ProfileOrders: FC = () => {
   const ingredients: TIngredient[] = useSelector(selectIngredients);
 
   useEffect(() => {
-    if (!ingredients?.length) {
-      dispatch(fetchIngredients());
-    }
     dispatch(fetchUserOrdersApi());
   }, []);
 

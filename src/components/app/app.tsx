@@ -18,30 +18,29 @@ import React, { useEffect } from 'react';
 import { useDispatch } from '../../services/store';
 import { fetchGetUserApi } from '../../slices/userSlice';
 import { ProtectedRoute } from '../protectedRoute/ProtectedRoute';
+import { fetchIngredients } from '../../slices/ingredientsSlice';
 
 const App = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const background = location.state?.background;
+  const backgroundState = location.state?.background;
 
   useEffect(() => {
-    if (localStorage.getItem('accessToken')) {
-      dispatch(fetchGetUserApi());
-    }
+    dispatch(fetchIngredients());
+    dispatch(fetchGetUserApi());
   }, []);
 
   return (
     <div className={styles.app}>
       <AppHeader />
-      <Routes location={background || location}>
+      <Routes location={backgroundState || location}>
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />
-
         <Route
           path='/login'
           element={
-            <ProtectedRoute isAuthenticated>
+            <ProtectedRoute isOnlyAnonymous>
               <Login />
             </ProtectedRoute>
           }
@@ -49,7 +48,7 @@ const App = () => {
         <Route
           path='/register'
           element={
-            <ProtectedRoute isAuthenticated>
+            <ProtectedRoute isOnlyAnonymous>
               <Register />
             </ProtectedRoute>
           }
@@ -57,7 +56,7 @@ const App = () => {
         <Route
           path='/reset-password'
           element={
-            <ProtectedRoute isAuthenticated>
+            <ProtectedRoute isOnlyAnonymous>
               <ResetPassword />
             </ProtectedRoute>
           }
@@ -65,12 +64,11 @@ const App = () => {
         <Route
           path='/forgot-password'
           element={
-            <ProtectedRoute isAuthenticated>
+            <ProtectedRoute isOnlyAnonymous>
               <ForgotPassword />
             </ProtectedRoute>
           }
         />
-
         <Route
           path='/profile'
           element={
@@ -99,7 +97,7 @@ const App = () => {
         <Route path='/feed/:number' element={<OrderInfo />} />
         <Route path='*' element={<NotFound404 />} />
       </Routes>
-      {background && (
+      {backgroundState && (
         <Routes>
           <Route
             path='/profile/orders/:number'

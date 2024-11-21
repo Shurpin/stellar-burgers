@@ -6,14 +6,9 @@ import { useDispatch, useSelector } from '../../services/store';
 import { useParams } from 'react-router-dom';
 import {
   fetchGetOrderByNumberApi,
-  fetchUserOrdersApi,
   selectOrdersByNumberApi
 } from '../../slices/orderSlice';
-import { getOrderByNumberApi } from '@api';
-import {
-  fetchIngredients,
-  selectIngredients
-} from '../../slices/ingredientsSlice';
+import { selectIngredients } from '../../slices/ingredientsSlice';
 
 export const OrderInfo: FC = () => {
   const dispatch = useDispatch();
@@ -25,9 +20,6 @@ export const OrderInfo: FC = () => {
   const ingredients: TIngredient[] = useSelector(selectIngredients);
 
   useEffect(() => {
-    if (!ingredients?.length) {
-      dispatch(fetchIngredients());
-    }
     if (params.number) {
       dispatch(fetchGetOrderByNumberApi(Number(params.number)));
     }

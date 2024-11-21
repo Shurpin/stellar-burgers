@@ -15,14 +15,10 @@ import {
 
 export const Feed: FC = () => {
   const dispatch = useDispatch();
-  const ingredients: TIngredient[] = useSelector(selectIngredients);
   const orders: TOrder[] = useSelector(selectFeedOrders);
   const isLoading = useSelector(selectFeedIsLoading);
 
   useEffect(() => {
-    if (!ingredients?.length) {
-      dispatch(fetchIngredients());
-    }
     dispatch(fetchFeed());
   }, []);
 
