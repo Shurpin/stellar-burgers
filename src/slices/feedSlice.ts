@@ -1,19 +1,22 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { getFeedsApi, TFeedsResponse } from '@api';
 import { TOrder } from '@utils-types';
+import { fetchIngredients } from './ingredientsSlice';
 
 interface FeedListState {
   orders: TOrder[];
   total: number;
   totalToday: number;
   isLoading: boolean;
+  error: unknown | null;
 }
 
-const initialState: FeedListState = {
+export const initialState: FeedListState = {
   orders: [],
   total: 0,
   totalToday: 0,
-  isLoading: true
+  isLoading: true,
+  error: null
 };
 
 export const fetchFeed = createAsyncThunk('feed/getFeeds', async () =>
@@ -25,9 +28,16 @@ const feedSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    // rejected
+    builder.addCase(fetchFeed.rejected, (state: FeedListState, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    });
+    // pending
     builder.addCase(fetchFeed.pending, (state: FeedListState) => {
       state.isLoading = true;
     });
+    // fulfilled
     builder.addCase(
       fetchFeed.fulfilled,
       (state: FeedListState, action: PayloadAction<TFeedsResponse>) => {

@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import tracksSliceReducer from '../slices/ingredientsSlice';
 import burgerConstructorSliceReducer from '../slices/burgerConstructorSlice';
 import feedSliceReducer from '../slices/feedSlice';
@@ -11,14 +11,16 @@ import {
   useSelector as selectorHook
 } from 'react-redux';
 
-const store = configureStore({
-  reducer: {
-    ingredients: tracksSliceReducer,
-    burgerConstructor: burgerConstructorSliceReducer,
-    feed: feedSliceReducer,
-    order: orderSliceReducer,
-    user: userSliceReducer
-  },
+export const rootReducer = combineReducers({
+  ingredients: tracksSliceReducer,
+  burgerConstructor: burgerConstructorSliceReducer,
+  feed: feedSliceReducer,
+  order: orderSliceReducer,
+  user: userSliceReducer
+});
+
+export const store = configureStore({
+  reducer: rootReducer,
   devTools: process.env.NODE_ENV !== 'production'
 });
 
