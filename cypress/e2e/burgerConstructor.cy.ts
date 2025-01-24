@@ -1,5 +1,6 @@
 import mockOrderResponse from '../fixtures/order.json';
 import mockTokenResponse from '../fixtures/token.json';
+import mockIngredientsResponse from '../fixtures/ingredients.json';
 import { deleteCookie, setCookie } from '../../src/utils/cookie';
 
 describe('burgerConstructor', () => {
@@ -58,10 +59,14 @@ describe('burgerConstructor', () => {
   });
 
   it('Открытие и закрытие модального окна', () => {
+    const mockIngredientName = mockIngredientsResponse.data[0].name; // Краторная булка N-200i
+    cy.get('ul:nth-of-type(1) > li:nth-of-type(1)').as('ingredient-element');
     cy.get('#modals > div').should('not.exist');
-    cy.get('ul:nth-of-type(1) > li:nth-of-type(1)').click();
+    cy.get('@ingredient-element').should('contain', mockIngredientName);
+    cy.get('@ingredient-element').click();
     cy.get('#modals > div').should('exist');
     cy.get('#modals > div').should('contain', 'Детали ингредиента');
+    cy.get('#modals > div').should('contain', mockIngredientName);
     cy.get('#modals button').click();
     cy.get('#modals > div').should('not.exist');
   });

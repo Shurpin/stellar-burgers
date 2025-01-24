@@ -49,6 +49,59 @@ describe('burgerConstructorSlice', () => {
     expect(ingredients).toHaveLength(0);
   });
 
+  test('добавление ингредиента в пустой конструктор', () => {
+    const store =  configureStore({
+      reducer: {
+        ingredients: reducer
+      }
+    });
+
+    expect(store.getState().ingredients.ingredients).toHaveLength(0);
+    expect(store.getState().ingredients.bun).toBeNull();
+
+
+    store.dispatch(addBurgerConstructorIngredient(mockMainIngredient));
+
+    expect(store.getState().ingredients.ingredients).toHaveLength(1);
+    expect(store.getState().ingredients.bun).toBeNull();
+  });
+
+  test('удаление ингредиента из пустого конструктора', () => {
+    const store =  configureStore({
+      reducer: {
+        ingredients: reducer
+      }
+    });
+
+    expect(store.getState().ingredients.ingredients).toHaveLength(0);
+    expect(store.getState().ingredients.bun).toBeNull();
+
+
+    store.dispatch(removeBurgerConstructorIngredient(0));
+
+    expect(store.getState().ingredients.ingredients).toHaveLength(0);
+    expect(store.getState().ingredients.bun).toBeNull();
+  });
+
+  test('перемещение ингредиента с неверными индексами', () => {
+    const mockIngredients = mockIngredientsResponse.data.map((item, index) => ({
+      ...item,
+      id: String(index)
+    }));
+
+    const { ingredients, bun } = reducer(
+      { ingredients: mockIngredients, bun: null },
+      moveToIngredient({ fromIndex: mockIngredients.length + 10, toIndex: 1 })
+    );
+
+    expect(bun).toBeNull();
+    expect(ingredients).toEqual(mockIngredients);
+
+    ingredients.forEach((ingredient, index) => {
+      expect(ingredient.id).toBe(mockIngredients[index].id);
+    })
+  });
+
   test('обработку экшена изменения порядка ингредиентов в начинке [вниз]', () => {
     const mockIngredients = mockIngredientsResponse.data.map((item, index) => ({
       ...item,
