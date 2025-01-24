@@ -8,14 +8,16 @@ interface IngredientsListState {
   mains: TIngredient[];
   sauces: TIngredient[];
   isLoading: boolean;
+  error: unknown | null;
 }
 
-const initialState: IngredientsListState = {
+export const initialState: IngredientsListState = {
   data: [],
   buns: [],
   mains: [],
   sauces: [],
-  isLoading: true
+  isLoading: true,
+  error: null
 };
 
 export const fetchIngredients = createAsyncThunk(
@@ -28,7 +30,19 @@ const ingredientsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // Add reducers for additional action types here, and handle loading state as needed
+    // rejected
+    builder.addCase(
+      fetchIngredients.rejected,
+      (state: IngredientsListState, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      }
+    );
+    // pending
+    builder.addCase(fetchIngredients.pending, (state: IngredientsListState) => {
+      state.isLoading = true;
+    });
+    // fulfilled
     builder.addCase(
       fetchIngredients.fulfilled,
       (state: IngredientsListState, action: PayloadAction<TIngredient[]>) => {

@@ -8,7 +8,7 @@ interface BurgerConstructorState {
   ingredients: TConstructorIngredient[];
 }
 
-const initialState: BurgerConstructorState = {
+export const initialState: BurgerConstructorState = {
   bun: null,
   ingredients: []
 };
@@ -50,11 +50,17 @@ const burgerConstructorSlice = createSlice({
         return arr;
       }
 
-      state.ingredients = array_move(
-        state.ingredients,
-        action.payload.fromIndex,
-        action.payload.toIndex
-      );
+      if (
+        state.ingredients.length &&
+        state.ingredients[action.payload.fromIndex] &&
+        state.ingredients[action.payload.toIndex]
+      ) {
+        state.ingredients = array_move(
+          state.ingredients,
+          action.payload.fromIndex,
+          action.payload.toIndex
+        );
+      }
     }
   }),
   extraReducers: (builder) => {

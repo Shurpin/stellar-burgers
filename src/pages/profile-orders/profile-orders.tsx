@@ -1,23 +1,11 @@
 import { ProfileOrdersUI } from '@ui-pages';
-import { TIngredient, TOrder } from '@utils-types';
+import { TOrder } from '@utils-types';
 import { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from '../../services/store';
-import {
-  fetchGetOrderByNumberApi,
-  fetchOrder,
-  fetchUserOrdersApi,
-  selectOrderData,
-  selectUserOrders
-} from '../../slices/orderSlice';
-import {
-  fetchIngredients,
-  selectIngredients
-} from '../../slices/ingredientsSlice';
+import { fetchUserOrdersApi, selectUserOrders } from '../../slices/orderSlice';
 
 export const ProfileOrders: FC = () => {
   const dispatch = useDispatch();
-
-  const ingredients: TIngredient[] = useSelector(selectIngredients);
 
   useEffect(() => {
     dispatch(fetchUserOrdersApi());

@@ -1,37 +1,36 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-  getOrderByNumberApi,
-  getOrdersApi,
-  orderBurgerApi,
-  TOrdersResponse
-} from '@api';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getOrderByNumberApi, getOrdersApi, orderBurgerApi } from '@api';
 import { TOrder } from '@utils-types';
 
 interface OrderListState {
-  order: TOrder | null;
-  orderIsLoading: boolean;
+  // заказы пользователя
   userOrders: TOrder[];
   userOrdersIsLoading: boolean;
+  userOrdersError: unknown | null;
+  // оформить заказ
   orderBurger: TOrder | null;
   orderBurgerIsLoading: boolean;
+  orderBurgerError: unknown | null;
+  // просмотр заказа пользователя
   ordersByNumberApi: TOrder | null;
-  isLoadingOrderByNumberApi: boolean;
+  ordersByNumberApiIsLoading: boolean;
+  ordersByNumberApiError: unknown | null;
 }
 
-const initialState: OrderListState = {
-  order: null,
-  orderIsLoading: false,
+export const initialState: OrderListState = {
+  // заказы пользователя
   userOrders: [],
   userOrdersIsLoading: false,
+  userOrdersError: null,
+  // оформить заказ
   orderBurger: null,
   orderBurgerIsLoading: false,
+  orderBurgerError: null,
+  // просмотр заказа пользователя
   ordersByNumberApi: null,
-  isLoadingOrderByNumberApi: false
+  ordersByNumberApiIsLoading: false,
+  ordersByNumberApiError: null
 };
-
-export const fetchOrder = createAsyncThunk('order/getOrder', async () =>
-  getOrdersApi()
-);
 
 export const fetchUserOrdersApi = createAsyncThunk(
   'order/getOrders',
@@ -57,15 +56,6 @@ const orderSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchOrder.pending, (state: OrderListState) => {
-      state.orderIsLoading = true;
-    });
-    builder.addCase(fetchOrder.fulfilled, (state: OrderListState, action) => {
-      state.orderIsLoading = false;
-    });
-    builder.addCase(fetchOrder.rejected, (state: OrderListState, action) => {
-      state.orderIsLoading = false;
-    });
     // заказы пользователя
     builder.addCase(fetchUserOrdersApi.pending, (state: OrderListState) => {
       state.userOrdersIsLoading = true;
@@ -81,6 +71,7 @@ const orderSlice = createSlice({
       fetchUserOrdersApi.rejected,
       (state: OrderListState, action) => {
         state.userOrdersIsLoading = false;
+        state.userOrdersError = action.payload;
       }
     );
     // оформить заказ
@@ -98,33 +89,33 @@ const orderSlice = createSlice({
       fetchOrderBurgerApi.rejected,
       (state: OrderListState, action) => {
         state.orderBurgerIsLoading = false;
+        state.orderBurgerError = action.payload;
       }
     );
     // просмотр заказа пользователя
     builder.addCase(
       fetchGetOrderByNumberApi.pending,
       (state: OrderListState) => {
-        state.isLoadingOrderByNumberApi = true;
+        state.ordersByNumberApiIsLoading = true;
       }
     );
     builder.addCase(
       fetchGetOrderByNumberApi.fulfilled,
       (state: OrderListState, action) => {
         state.ordersByNumberApi = action.payload.orders[0];
-        state.isLoadingOrderByNumberApi = false;
+        state.ordersByNumberApiIsLoading = false;
       }
     );
     builder.addCase(
       fetchGetOrderByNumberApi.rejected,
       (state: OrderListState, action) => {
-        state.isLoadingOrderByNumberApi = false;
+        state.ordersByNumberApiIsLoading = false;
+        state.ordersByNumberApiError = action.payload;
       }
     );
   },
   selectors: {
-    selectOrderData: (sliceState) => sliceState.order,
     selectUserOrders: (sliceState) => sliceState.userOrders,
-    selectOrderIsLoading: (sliceState) => sliceState.orderIsLoading,
     orderBurger: (sliceState) => sliceState.orderBurger,
     selectOrderBurgerIsLoading: (sliceState) => sliceState.orderBurgerIsLoading,
     selectOrdersByNumberApi: (sliceState) => sliceState.ordersByNumberApi
@@ -132,8 +123,6 @@ const orderSlice = createSlice({
 });
 
 export const {
-  selectOrderData,
-  selectOrderIsLoading,
   selectUserOrders,
   orderBurger,
   selectOrderBurgerIsLoading,
